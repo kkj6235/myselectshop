@@ -81,11 +81,21 @@ public class NaverApiService {
     }
 
     public ProductResponseDto registerItems(ItemDto itemDto) {
-        if(productRepository.existsByTitle(itemDto.getTitle())){
+        if(Boolean.TRUE.equals(productRepository.existsByTitle(itemDto.getTitle()))){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         Product entity = Product.toEntity(itemDto);
         productRepository.save(entity);
         return ProductResponseDto.toDto(entity);
+    }
+
+    public List<ProductResponseDto> getWishItems() {
+
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(ProductResponseDto::toDto)
+                .toList();
+
     }
 }

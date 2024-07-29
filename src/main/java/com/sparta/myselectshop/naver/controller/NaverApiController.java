@@ -25,4 +25,8 @@ public class NaverApiController {
     public ProductResponseDto registerItems(@RequestBody ItemDto itemDto){
         return naverApiService.registerItems(itemDto);
     }
+    @GetMapping("/products")
+    public List<ProductResponseDto> getWishItems(){
+        return naverApiService.getWishItems();
+    }
 }
