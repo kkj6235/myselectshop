@@ -3,14 +3,12 @@ package com.sparta.myselectshop.naver.service;
 
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.naver.dto.ProductResponseDto;
+import com.sparta.myselectshop.naver.dto.UpdateReqDto;
 import com.sparta.myselectshop.naver.entity.Product;
 import com.sparta.myselectshop.naver.repository.ProductRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
@@ -80,7 +78,7 @@ public class NaverApiService {
         return itemDtoList;
     }
 
-    public ProductResponseDto registerItems(ItemDto itemDto) {
+    public ProductResponseDto registerItem(ItemDto itemDto) {
         if(Boolean.TRUE.equals(productRepository.existsByTitle(itemDto.getTitle()))){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
@@ -96,6 +94,18 @@ public class NaverApiService {
         return products.stream()
                 .map(ProductResponseDto::toDto)
                 .toList();
+
+    }
+
+    public ProductResponseDto updateItem(Long id, UpdateReqDto updateReqDto) {
+
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        product.setPrice(updateReqDto.getMyprice());
+
+        productRepository.save(product);
+
+        return ProductResponseDto.toDto(product);
 
     }
 }
